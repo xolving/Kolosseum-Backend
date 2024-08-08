@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
+import { Role } from 'src/user/entity/role.enum';
 import { User } from 'src/user/entity/user.entity';
 import { UserBuilder } from 'src/user/pattern/user.builder';
 import { Repository } from 'typeorm';
@@ -34,6 +35,7 @@ export class AuthService {
     const encryptPassword = await bcrypt.hash(createUserRequest.password, 10);
     const user = new UserBuilder()
       .setId(randomUUID())
+      .setRole(Role.ROLE_USER)
       .setVerify(false)
       .setEmail(createUserRequest.email)
       .setPassword(encryptPassword)
@@ -64,7 +66,6 @@ export class AuthService {
     };
 
     const secret = this.jwtService.sign(payload);
-    console.log(secret);
 
     return {
       access_token: secret,
