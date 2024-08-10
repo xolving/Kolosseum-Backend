@@ -9,9 +9,6 @@ export class UserController {
   @Get('status')
   @UseGuards(AuthGuard)
   async getStatus(@Req() request: Request) {
-    request.headers.forEach((element) => {
-      console.log(element);
-    });
-    return;
+    return this.userService.getStatus(request);
   }
 }

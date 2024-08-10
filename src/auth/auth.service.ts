@@ -66,9 +66,11 @@ export class AuthService {
     };
 
     const secret = this.jwtService.sign(payload);
+    const expired = this.jwtService.decode(secret).exp;
 
     return {
       access_token: secret,
+      expired: expired,
     };
   }
 }
