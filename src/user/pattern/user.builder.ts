@@ -29,6 +29,12 @@ export class UserBuilder {
     return this;
   }
   build() {
-    return new User(this.id, this.email, this.password, this.isVerify);
+    const user = new User();
+    user.id = this.id;
+    user.email = this.email;
+    user.password = this.password;
+    user.isVerify = this.isVerify;
+
+    return user;
   }
 }

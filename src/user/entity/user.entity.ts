@@ -1,15 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Board } from 'src/board/entity/board.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from './role.enum';
 
 @Entity('users')
 export class User {
-  constructor(id: string, email: string, password: string, isVerify: boolean) {
-    this.id = id;
-    this.email = email;
-    this.password = password;
-    this.isVerify = isVerify;
-  }
-
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -24,4 +18,7 @@ export class User {
 
   @Column({ default: false })
   isVerify: boolean;
+
+  @OneToMany(() => Board, (board) => board.user)
+  boards: Board[];
 }

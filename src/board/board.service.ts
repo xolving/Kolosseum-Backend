@@ -1,26 +1,46 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Request } from 'express';
+import { UserFacade } from 'src/user/pattern/user.facade';
+import { Repository } from 'typeorm';
 import { CreateBoardDto } from './dto/create-board.dto';
-import { UpdateBoardDto } from './dto/update-board.dto';
+import { Board } from './entity/board.entity';
+import { BoardBuilder } from './pattern/board.builder';
 
 @Injectable()
 export class BoardService {
-  create(createBoardDto: CreateBoardDto) {
-    return 'This action adds a new board';
+  constructor(
+    @InjectRepository(Board)
+    private readonly boardRepository: Repository<Board>,
+    private readonly userFacade: UserFacade,
+  ) {}
+
+  async createBoard(request: Request, createBoardDto: CreateBoardDto) {
+    const user = await this.userFacade.getUser(request);
+
+    const board = new BoardBuilder()
+      .setTitle(createBoardDto.title)
+      .setContent(createBoardDto.content)
+      .setUser(user)
+      .setPublished(new Date())
+      .build();
+
+    this.boardRepository.save(board);
   }
 
-  findAll() {
-    return `This action returns all board`;
-  }
+  async getPostList(count: number) {
+    const boards = await this.boardRepository.find({
+      order: { published: 'DESC' },
+      take: count,
+      relations: ['user'],
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} board`;
-  }
-
-  update(id: number, updateBoardDto: UpdateBoardDto) {
-    return `This action updates a #${id} board`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} board`;
+    return boards.map((board) => ({
+      id: board.id,
+      title: board.title,
+      content: board.content,
+      published: board.published,
+      userId: board.user.id,
+    }));
   }
 }

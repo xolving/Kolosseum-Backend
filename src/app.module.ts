@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import typeOrmConfig from 'src/configs/db.config';
 import { AuthModule } from './auth/auth.module';
+import { Board } from './board/entity/board.entity';
 import { BoardModule } from './board/board.module';
 import { ConfigsModule } from './configs/configs.module';
 import { HistoryModule } from './history/history.module';
@@ -21,10 +22,9 @@ import { UserModule } from './user/user.module';
       username: typeOrmConfig().username,
       password: typeOrmConfig().password,
       database: typeOrmConfig().name,
-      entities: [User],
+      entities: [User, Board],
       synchronize: true,
       autoLoadEntities: true,
-      timezone: '+09:00',
     }),
     ConfigsModule,
   ],
